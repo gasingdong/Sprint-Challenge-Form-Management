@@ -1,14 +1,15 @@
 import React from 'react';
 import { FormikProps, Form, Field, withFormik } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 
 interface RegisterValues {
-  name: string;
+  username: string;
   password: string;
 }
 
 interface RegisterProps {
-  initialName?: string;
+  initialUsername?: string;
   initialPassword?: string;
 }
 
@@ -17,8 +18,10 @@ class RegisterForm extends React.Component<FormikProps<RegisterValues>, {}> {
     const { touched, errors } = this.props;
     return (
       <Form className="register-form">
-        {touched.name && errors.name && <p className="error">{errors.name}</p>}
-        <Field type="name" name="name" placeholder="Name" />
+        {touched.username && errors.username && (
+          <p className="error">{errors.username}</p>
+        )}
+        <Field type="username" name="username" placeholder="Username" />
         {touched.password && errors.password && (
           <p className="error">{errors.password}</p>
         )}
@@ -31,24 +34,32 @@ class RegisterForm extends React.Component<FormikProps<RegisterValues>, {}> {
 
 const FormikRegisterForm = withFormik<RegisterProps, RegisterValues>({
   mapPropsToValues({
-    initialName,
+    initialUsername,
     initialPassword,
   }: RegisterProps): RegisterValues {
     return {
-      name: initialName || '',
+      username: initialUsername || '',
       password: initialPassword || '',
     };
   },
 
   validationSchema: Yup.object().shape({
-    name: Yup.string().required('Please enter a name'),
+    username: Yup.string().required('Please enter a username'),
     password: Yup.string()
       .min(8, 'Password must be at least 8 characters')
       .required('Please enter a password'),
   }),
 
   async handleSubmit(values, { setStatus }): Promise<void> {
-    console.log('Submitted: ', values);
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/register',
+        values
+      );
+      setStatus(response.data);
+    } catch (err) {
+      console.log(err);
+    }
   },
 })(RegisterForm);
 
