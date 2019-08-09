@@ -1,12 +1,15 @@
 import React from 'react';
 import './App.css';
 
-class App extends React.Component {
+interface AppState {
+  users: string[];
+}
+class App extends React.Component<{}, AppState> {
   public state = {
     users: [],
   };
 
-  public return(): React.ReactElement {
+  public render(): React.ReactElement {
     return <div className="App"></div>;
   }
 }
