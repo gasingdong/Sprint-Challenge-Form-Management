@@ -2,18 +2,40 @@ import React from 'react';
 import { FormikProps, Form, Field, withFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { Recipe } from '../App';
+
+interface RegisterProps {
+  initialUsername?: string;
+  initialPassword?: string;
+  setRecipes: (recipes: Recipe[]) => void;
+}
 
 interface RegisterValues {
   username: string;
   password: string;
 }
 
-interface RegisterProps {
-  initialUsername?: string;
-  initialPassword?: string;
+interface OtherProps {
+  setRecipes: (recipes: Recipe[]) => void;
 }
 
-class RegisterForm extends React.Component<FormikProps<RegisterValues>, {}> {
+class RegisterForm extends React.Component<
+  OtherProps & FormikProps<RegisterValues>,
+  {}
+> {
+  public async componentDidUpdate(): Promise<void> {
+    if (this.props.status) {
+      try {
+        const response = await axios.get(
+          'http://localhost:5000/api/restricted/data'
+        );
+        this.props.setRecipes(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
+
   public render(): React.ReactElement {
     const { touched, errors } = this.props;
     return (
