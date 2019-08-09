@@ -27,7 +27,7 @@ class App extends React.Component<{}, AppState> {
     return (
       <div className="App">
         <FormikRegisterForm setRecipes={this.setRecipes} />
-        <RecipeList recipes={this.state.recipes} />
+        <RecipeList recipes={this.state.recipes} handleClick={(): void => {}} />
       </div>
     );
   }
